@@ -18,6 +18,10 @@
 (def first-section (first (h3-sections page)))
 
 (map :tag (nth sections 11))
+(:id (:attrs (first (:content (first section)))))
+
+(defn parse-section-id [section]
+  (->> section first :content first :attrs :id))
 
 
 (def matcher (re-matcher #" (\d+) (.*)" " 505 HTTP Version Not Supported"))

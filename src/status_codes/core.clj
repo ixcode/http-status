@@ -1,5 +1,7 @@
 (ns status-codes.core
-  (:require [net.cgrand.enlive-html :as html]))
+  (:require [net.cgrand.enlive-html :as html]
+            [clojure.data.json :as json])
+  (:use [clojure.pprint]))
 
 ;; See https://github.com/swannodette/enlive-tutorial/blob/master/src/tutorial/scrape1.clj
 
@@ -34,10 +36,10 @@
 (defn parse-status-text [status-text]
   (let [matcher (re-matcher #" (\d+) (.*)" status-text)
         groups (re-find matcher)]
-    [(second groups) (nth groups 2)]))
+    (if (nil? (second groups))
+      [nil, (clojure.string/trim status-text)]
+      [(second groups) (nth groups 2)])))
 
-(defn parse-description [section]
-  )
 
 (defn map-status-code [section]
   (let [h3-tag (first section)
@@ -50,4 +52,11 @@
      :section section-id
      :description description }))
 
+(def status-codes (map map-status-code sections))
 
+
+(defn -main [& args]
+  (print "Going to generate status code db...\n")
+  (spit "status-codes.edn" (pr-str status-codes))
+  (spit "status-codes.json" (json/write-str status-codes))
+  (print "Finished.\n"))
