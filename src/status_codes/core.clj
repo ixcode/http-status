@@ -36,13 +36,18 @@
         groups (re-find matcher)]
     [(second groups) (nth groups 2)]))
 
+(defn parse-description [section]
+  )
+
 (defn map-status-code [section]
   (let [h3-tag (first section)
         status-text (second (:content h3-tag))
         [code text] (parse-status-text status-text)
-        section-id (:id (:attrs (first (:content (first section)))))] 
+        section-id (:id (:attrs (first (:content (first section)))))
+        description (apply str  (flatten (map html/text (rest section))))] 
     {:code code
      :text text
-     :section section-id}))
+     :section section-id
+     :description description }))
 
 
